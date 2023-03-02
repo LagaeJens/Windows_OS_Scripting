@@ -19,6 +19,8 @@ try {
     Write-Host "Setting local IP address to $localIP ..."
     try {
         New-NetIPAddress -InterfaceAlias $InterfaceAlias -IPAddress $localIP -PrefixLength 24 -DefaultGateway $defaultGateway -ErrorAction Stop
+        Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\" -Name "DisabledComponents" -Value "0xffffffff" -Type DWORD
+
     }
     catch {
         if ($_.Exception.Message -like "*not on the same network*") {
@@ -34,7 +36,7 @@ try {
 
     # Set time zone
     Write-Host "Setting time zone ..."
-    Set-TimeZone -Id "Coordinated Universal Time" -ErrorAction Stop
+    Set-TimeZone -Id "Central European Standard Time" -ErrorAction Stop
     Start-Sleep -Seconds 5
 
     # Enable remote desktop access
