@@ -45,11 +45,18 @@ try {
     Start-Sleep -Seconds 5
 
 
-    # Disable IE Enhanced Security Setting
-    Write-Host "Disabling IE Enhanced Security Setting ..."
+    # Disable IE Enhanced Security Setting for Administrators
+    Write-Host "Disabling IE Enhanced Security Setting for Administrators..."
     $AdminKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}"
     Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0 -ErrorAction Stop
     Start-Sleep -Seconds 5
+
+    # Disable IE Enhanced Security Setting for Users
+    Write-Host "Disabling IE Enhanced Security Setting for Users..."
+    $UserKey = "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}"
+    Set-ItemProperty -Path $UserKey -Name "IsInstalled" -Value 0 -ErrorAction Stop
+    Start-Sleep -Seconds 5
+
 
     #first check if the icons are already set to small and else set them to small so the access is easier
     If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel")) {
