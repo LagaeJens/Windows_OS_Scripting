@@ -51,10 +51,13 @@ try {
     Set-ItemProperty -Path $AdminKey -Name "IsInstalled" -Value 0 -ErrorAction Stop
     Start-Sleep -Seconds 5
 
-    # # Set Control Panel view to "Small icons"
-    # Write-Host "Setting Control Panel view to 'Small icons' ..."
-    # Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" -Name "AllItemsIconView" -Value 1 -ErrorAction Stop
-    # Start-Sleep -Seconds 5
+    #first check if the icons are already set to small and else set them to small so the access is easier
+    If (!(Test-Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel")) {
+        New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" | Out-Null
+    }
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" -Name "StartupPage" -Type DWord -Value 1
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel" -Name "AllItemsIconView" -Type DWord -Value 1
+    Start-Sleep -Seconds 5
 
     # Show file extensions in Windows Explorer
     Write-Host "Showing file extensions in Windows Explorer ..."
