@@ -49,12 +49,13 @@ Start-Sleep -Seconds $Delay.TotalSeconds
 # Configure network settings
 Write-Host "Configuring network settings"
 $NIC = Get-NetAdapter -InterfaceAlias $InterfaceAlias
+$SubnetPrefixLength = Convert-SubnetMaskToPrefixLength $SubnetMask
 $IPConfig = @{
     AddressFamily  = "IPv4"
     IPAddress      = $IpAddress
     InterfaceIndex = $NIC.ifIndex
     DefaultGateway = $DefaultGateway
-    PrefixLength   = $SubnetMask
+    PrefixLength   = $SubnetPrefixLength
 }
 try {
     Set-NetIPAddress @IPConfig -ErrorAction Stop
@@ -64,6 +65,7 @@ catch {
     exit 1
 }
 Start-Sleep -Seconds $Delay.TotalSeconds
+
 
 # Set DNS servers
 Write-Host "Setting DNS servers"
