@@ -1,7 +1,8 @@
 # Prompt the user to enter the domain name and administrator credentials
+# $DomainAdmin = Get-Credential -Message "Enter the domain administrator credentials"
 Add-Type -AssemblyName Microsoft.VisualBasic
-$DomainName = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the name of the new domain (e.g. example.com)")
-$DomainAdmin = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the domain administrator credentials")
+$DomainName = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the hostname for this server (e.g. DC01)", "Hostname")
+$DomainAdmin = Get-Credential -Message "Enter the domain administrator credentials"
 
 # Install the AD DS role
 Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
@@ -24,4 +25,4 @@ $DnsSecondary = Read-Host "Enter the IP address of the secondary DNS server"
 Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" } | Set-DnsClientServerAddress -ServerAddresses ($DnsPrimary, $DnsSecondary)
 
 # Reboot the server to complete the domain controller installation
-# Restart-Computer -Force
+Restart-Computer -Force
