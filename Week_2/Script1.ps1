@@ -1,29 +1,29 @@
-# Prompt the user to enter the domain name and administrator credentials
 Add-Type -AssemblyName Microsoft.VisualBasic
-$DomainName = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the hostname for this server (e.g. DC01)", "Hostname")
-$Username = "administrator"
-$Password = ConvertTo-SecureString "P@ssw0rd" -AsPlainText -Force
-$DomainAdmin = New-Object System.Management.Automation.PSCredential($Username, $Password)
 
-# Install the AD DS role
-Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+# Domain name
+$domainName = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the domain name (e.g. intranet.mycompany.be)", "Domain name")
 
-# Promote the server to a domain controller in a new forest and domain
-Install-ADDSForest `
-    -DomainName $DomainName `
-    -DomainNetbiosName $DomainName.Split('.')[0] `
-    -ForestMode WinThreshold `
-    -DomainMode WinThreshold `
-    -DomainAdministratorCredential $DomainAdmin `
-    -InstallDNS:$true `
-    -NoRebootOnCompletion:$false
+# Make netbios name from domain name take middle part
+$domainNetbiosName = $domainName.Split(".")[1]
+# Make sure the netbios name is not longer than 15 characters
+if ($domainNetbiosName.Length -gt 15) {
+    $domainNetbiosName = $domainNetbiosName.Substring(0, 15)
+}
+# Set the domain netbios name to uppercase
+$domainNetbiosName = $domainNetbiosName.ToUpper()
 
-# Prompt the user to enter the DNS server IP addresses
-$DnsPrimary = Read-Host "Enter the IP address of the primary DNS server"
-$DnsSecondary = Read-Host "Enter the IP address of the secondary DNS server"
+# Promote the first server to the first DC for the new forest/domain
+Install-ADDSForest -DomainName $domainName -DomainNetbiosName $domainNetbiosName -SafeModeAdministratorPassword (ConvertTo-SecureString -AsPlainText "P@ssw0rd" -Force)
 
-# Set the DNS server IP addresses
-Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" } | Set-DnsClientServerAddress -ServerAddresses ($DnsPrimary, $DnsSecondary)
+# Check if the necessary role(s) is/are installed. If not, install them.
+$roles = "AD-Domain-Services", "DNS"
+foreach ($role in $roles) {
+    if ((Get-WindowsFeature -Name $role).Installed -ne $true) {
+        Install-WindowsFeature -Name $role -IncludeManagementTools
+    }
+}
 
-# Reboot the server to complete the domain controller installation
-# Restart-Computer -Force
+# Prompt the user to reboot the computer to complete the domain controller installation
+if (Read-Host "The server must be rebooted for the changes to take effect. Do you want to reboot now? (Y/N)" -eq "Y") {
+    Restart-Computer -Force
+}
