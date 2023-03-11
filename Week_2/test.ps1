@@ -25,7 +25,7 @@ Install-ADDSDomainController `
     -NoGlobalCatalog:$false `
     -CreateDnsDelegation:$false `
     -Force:$true `
-    -AllowPasswordReplicationAccountCreation:$true `
+    # -AllowPasswordReplicationAccountCreation:$true `
     -CriticalReplicationOnly:$false `
     -DatabasePath "C:\Windows\NTDS" `
     -LogPath "C:\Windows\NTDS" `
