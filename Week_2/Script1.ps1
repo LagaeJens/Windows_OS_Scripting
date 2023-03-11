@@ -27,3 +27,5 @@ foreach ($role in $roles) {
 if (Read-Host "The server must be rebooted for the changes to take effect. Do you want to reboot now? (Y/N)" -eq "Y") {
     Restart-Computer -Force
 }
+
+
