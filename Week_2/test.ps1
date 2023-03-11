@@ -1,49 +1,54 @@
-# Define variables
-$domainName = "newdomain.com"
-$adminUser = "Administrator"
-$adminPassword = "P@ssw0rd"
-$dnsPrimary = "192.168.1.10"
-$dnsSecondary = "192.168.1.11"
-$subnet = "192.168.1.0/24"
-$firstDCIP = "192.168.1.10"
-$dhcpRangeStart = "192.168.1.100"
+# Variables
+$domainName = "intranet.com"
+$domainNetBIOSName = "intranet"
+$dcName = "DC1"
+$dcIPAddress = "192.168.1.2"
+$adminCreds = Get-Credential
+$dhcpScopeName = "MyScope"
+$dhcpRangeStart = "192.168.1.10"
 $dhcpRangeEnd = "192.168.1.200"
+$dhcpSubnetMask = "255.255.255.0"
 $dhcpRouter = "192.168.1.1"
-$dhcpDNS = $dnsPrimary, $dnsSecondary
+$dhcpDNSServers = "192.168.1.2"
+$adapter = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Select-Object -First 1
 
-# Promote the first server to the first DC for the new forest/domain
-Install-ADDSForest -DomainName $domainName -InstallDNS -SafeModeAdministratorPassword (ConvertTo-SecureString -AsPlainText $adminPassword -Force)
 
-# Check if the necessary role(s) is/are installed. If not, install them.
-$roles = "DNS"
+# Promote first server to DC
+Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
+Import-Module ADDSDeployment
+Install-ADDSDomainController `
+    -Credential $adminCreds `
+    -NoGlobalCatalog:$false `
+    -CreateDnsDelegation:$false `
+    -Force:$true `
+    -Confirm:$false `
+    -AllowPasswordReplicationAccountCreation:$true `
+    -CriticalReplicationOnly:$false `
+    -DatabasePath "C:\Windows\NTDS" `
+    -LogPath "C:\Windows\NTDS" `
+    -SysvolPath "C:\Windows\SYSVOL" `
+    -Force:$true `
+    -NoRebootOnCompletion:$true `
+    -SkipPreCheck:$false `
+    -Path "C:\Windows\NTDS" `
+    -DomainAdministratorCredential $adminCreds `
+    -Server $dcName `
+    -InstallDns:$true
+
+# Check if necessary role(s) are installed
+$roles = Get-WindowsFeature | Where-Object { $_.Name -eq "AD-Domain-Services" -or $_.Name -eq "DNS" }
 foreach ($role in $roles) {
-    if ((Get-WindowsFeature -Name $role).Installed -ne $true) {
-        Install-WindowsFeature -Name $role -IncludeManagementTools
+    if ($role.Installed -ne $true) {
+        # Install necessary role(s)
+        Install-WindowsFeature $role.Name
     }
 }
 
-# Set the DNS server IP addresses
-Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" } | Set-DnsClientServerAddress -ServerAddresses ($dnsPrimary, $dnsSecondary)
+# Set DNS server for the domain
+Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses $dcIPAddress
 
-# Create the reverse lookup zone for the subnet and add a pointer record for the first domain controller
-Add-DnsServerPrimaryZone -Name "1.168.192.in-addr.arpa" -ZoneFile "1.168.192.in-addr.arpa.dns"
-Add-DnsServerResourceRecordPtr -ZoneName "1.168.192.in-addr.arpa" -PTRDomainName "dc1.$domainName" -IPv4Address $firstDCIP
-
-# Rename the default site and add the subnet to it
-Rename-Item -Path "AD:\Sites\Default-First-Site-Name" -NewName "Site-1"
-$site = Get-ADReplicationSubnet -Filter "Name -eq '192.168.1.0/24'"
-Set-ADReplicationSubnet -Identity $site -Site "Site-1"
-
-# Install and configure DHCP server
-Install-WindowsFeature -Name DHCP -IncludeManagementTools
-Add-DhcpServerInDC
-Set-DhcpServerDnsCredential -Credential (New-Object System.Management.Automation.PSCredential ($adminUser, (ConvertTo-SecureString $adminPassword -AsPlainText -Force)))
-Add-DhcpServerv4Scope -Name "Scope-1" -StartRange $dhcpRangeStart -EndRange $dhcpRangeEnd -SubnetMask "255.255.255.0" -State Active
-Set-DhcpServerv4OptionValue -ScopeId 1.168.192.0 -Router $dhcpRouter -DnsServer $dhcpDNS
-
-# Authorize DHCP server
-Add-DhcpServerInDC
-Set-DhcpServerInDC -DnsCredential (New-Object System.Management.Automation.PSCredential ($adminUser, (ConvertTo-SecureString $adminPassword -AsPlainText -Force))) -DnsUpdateProxy "Any"
-
-# Check if DHCP server is authorized and remove warning in Server Manager
-Get-DhcpServerInDC | Set-DhcpServerInDC -Dns
+# Configure DHCP server and scope
+Add-WindowsFeature DHCP
+Add-DhcpServerv4Scope -Name $dhcpScopeName -StartRange $dhcpRangeStart -EndRange $dhcpRangeEnd -SubnetMask $dhcpSubnetMask -State Active
+Set-DhcpServerv4OptionValue -OptionId 3 -Value $dhcpRouter -ScopeId $dhcpScopeName
+Set-DhcpServerv4OptionValue -OptionId 6 -Value $dhcpDNSServers -ScopeId $dhcpScopeName
