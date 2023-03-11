@@ -10,8 +10,12 @@ $dhcpRangeEnd = "192.168.1.200"
 $dhcpSubnetMask = "255.255.255.0"
 $dhcpRouter = "192.168.1.1"
 $dhcpDNSServers = "192.168.1.2"
+
+# Get the first network adapter with status "Up"
 $adapter = Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | Select-Object -First 1
 
+# Get the interface index of the adapter
+$interfaceIndex = $adapter.InterfaceIndex
 
 # Promote first server to DC
 Install-WindowsFeature AD-Domain-Services -IncludeManagementTools
@@ -21,13 +25,11 @@ Install-ADDSDomainController `
     -NoGlobalCatalog:$false `
     -CreateDnsDelegation:$false `
     -Force:$true `
-    -Confirm:$false `
     -AllowPasswordReplicationAccountCreation:$true `
     -CriticalReplicationOnly:$false `
     -DatabasePath "C:\Windows\NTDS" `
     -LogPath "C:\Windows\NTDS" `
     -SysvolPath "C:\Windows\SYSVOL" `
-    -Force:$true `
     -NoRebootOnCompletion:$true `
     -SkipPreCheck:$false `
     -Path "C:\Windows\NTDS" `
@@ -45,7 +47,7 @@ foreach ($role in $roles) {
 }
 
 # Set DNS server for the domain
-Set-DnsClientServerAddress -InterfaceIndex $adapter -ServerAddresses $dcIPAddress
+Set-DnsClientServerAddress -InterfaceIndex $interfaceIndex -ServerAddresses $dcIPAddress
 
 # Configure DHCP server and scope
 Add-WindowsFeature DHCP
