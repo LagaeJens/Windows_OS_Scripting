@@ -8,7 +8,7 @@ $Surname = $Name.Split(' ')[1]
 $SamAccountName = $GivenName.ToLower() + $Surname.ToLower().Substring(0, 1)
 
 # Construct OU path
-$OUPath = "OU=$Department,OU=Departments,OU=ABC,DC=contoso,DC=com"
+$OUPath = "OU=$Department,OU=Departments,DC=intranet,DC=com"
 
 # Create user object
 New-ADUser -Name $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -Path $OUPath -AccountPassword (ConvertTo-SecureString "P@ssw0rd123" -AsPlainText -Force) -Enabled $true
@@ -19,6 +19,6 @@ New-Item -ItemType Directory -Path $HomeFolderPath
 
 # Set permissions on home folder
 $Acl = Get-Acl $HomeFolderPath
-$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("contoso\$SamAccountName", "FullControl", "Allow")
+$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("intranet\$SamAccountName", "FullControl", "Allow")
 $Acl.SetAccessRule($Ar)
 Set-Acl $HomeFolderPath $Acl
