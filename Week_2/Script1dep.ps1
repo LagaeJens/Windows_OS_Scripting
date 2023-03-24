@@ -1,29 +1,39 @@
-# Prompt the user to enter the domain name and administrator credentials
-Add-Type -AssemblyName Microsoft.VisualBasic
-$DomainName = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the hostname for this server (e.g. DC01)", "Hostname")
-$Username = "administrator"
-$Password = ConvertTo-SecureString "P@ssw0rd" -AsPlainText -Force
-$DomainAdmin = New-Object System.Management.Automation.PSCredential($Username, $Password)
-
-# Install the AD DS role
-Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
-
-# Promote the server to a domain controller in a new forest and domain
+# Create a new forest
 Install-ADDSForest `
-    -DomainName $DomainName `
-    -DomainNetbiosName $DomainName.Split('.')[0] `
-    -ForestMode WinThreshold `
-    -DomainMode WinThreshold `
-    -DomainAdministratorCredential $DomainAdmin `
-    -InstallDNS:$true `
-    -NoRebootOnCompletion:$false
+    -DomainName "mct.be" `
+    -DomainMode "Win2016" `
+    -ForestMode "Win2016" `
+    -InstallDNS `
+    -CreateDnsDelegation:$false `
+    -NoRebootOnCompletion:$false `
+    -Force:$true
 
-# Prompt the user to enter the DNS server IP addresses
-$DnsPrimary = Read-Host "Enter the IP address of the primary DNS server"
-$DnsSecondary = Read-Host "Enter the IP address of the secondary DNS server"
+# Get the network interface
+$nic = Get-NetAdapter | Where-Object {$_.Status -eq "Up" -and $_.InterfaceAlias -eq "Ethernet"}
 
-# Set the DNS server IP addresses
-Get-NetAdapter | Where-Object { $_.InterfaceDescription -like "*Ethernet*" } | Set-DnsClientServerAddress -ServerAddresses ($DnsPrimary, $DnsSecondary)
+# Configure DNS servers
+if($nic){
+    $dnsServers = Get-DnsClientServerAddress -InterfaceIndex $nic.ifIndex | Select-Object -ExpandProperty ServerAddresses
+}
+if($dnsServers){
+    $preferredDNSServer = "192.168.0.10"
+    $alternateDNSServer = "192.168.0.11"
+    Set-DnsClientServerAddress -InterfaceIndex $nic.ifIndex -ServerAddresses ($preferredDNSServer, $alternateDNSServer)
+}
 
-# Reboot the server to complete the domain controller installation
-# Restart-Computer -Force
+# Create DNS zones
+$subnet = "192.168.0.0/24"
+$zoneName = "mct.be"
+Add-DnsServerZone -NetworkId $subnet -Name $zoneName
+
+# Create DNS resource records
+$ptrRecord = "mctbe-dc01"
+$dnsServer = "mct.be"
+Add-DnsServerResourceRecordPtr -ZoneName $zoneName -Name $ptrRecord -PtrDomainName $dnsServer
+
+# Create and configure the AD site
+if(Get-Command Set-ADSite){
+    $dcsiteName = "Default-First-Site-Name"
+    Set-ADSite -Identity $dcsiteName -Name "Main Site"
+    Set-ADSite -Identity $dcsiteName -Add @{"Subnets" = $subnet}
+}
