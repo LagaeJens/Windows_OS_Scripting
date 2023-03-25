@@ -3,7 +3,7 @@ Add-Type -AssemblyName Microsoft.VisualBasic
 # promote to domain controller
 $domainname = [Microsoft.VisualBasic.Interaction]::InputBox("Enter the domainname for this server (e.g. intranet.com )")
 Install-WindowsFeature -name AD-Domain-Services -IncludeManagementTools
-Install-ADDSForest -DomainName $domainname -DomainNetBIOSName AD -InstallDNS
+Install-ADDSForest -DomainName $domainname -DomainNetBIOSName AD -InstallDNS -NoRebootOnCompletion:$true -Force:$true
 
 # Set ip address and DNS server
 $IPAddress = [Microsoft.VisualBasic.Interaction]::InputBox("Domain controller IP address (e.g. 192.168.1.x)")
