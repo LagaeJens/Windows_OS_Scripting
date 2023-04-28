@@ -1,0 +1,3 @@
+Name;SamAccountName;GivenName;Surname;DisplayName;AccountPassword;HomeDrive;Path
+Rozemieke;Rozemieke;Rozemieke;;Rozemieke;P@ssw0rd;H:;OU=Secretariaat,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+ProfessorGobelijn;ProfessorGobelijn;Professor;Gobelijn;Professor Gobelijn;P@ssw0rd;H:;OU=Directie,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
