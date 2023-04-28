@@ -1,0 +1,8 @@
+Name;Display Name;Description;Path
+Mijn School;Mijn School;Mijn School;DC=intranet,DC=mijnschool,DC=be
+Secretariaat;Secretariaat;Secretariaat;OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+Directie;Directie;Directie;OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+Leerkrachten;Leerkrachten;Leerkrachten;OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+Leerlingen;Leerlingen;Leerlingen;OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+1ste leerjaar;1ste leerjaar;1ste leerjaar;OU=Leerlingen,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+2de leerjaar;2de leerjaar;2de leerjaar;OU=Leerlingen,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
