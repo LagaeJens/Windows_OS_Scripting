@@ -36,8 +36,7 @@ else {
     $Inheritance = "ContainerInherit, ObjectInherit"
     $Propagation = "None"
     $AccessControlType = "Allow"
-    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule
-    ($Identity, $Permission, $Inheritance, $Propagation, $AccessControlType)
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($Identity, $Permission, $Inheritance, $Propagation, $AccessControlType)
     $acl.AddAccessRule($rule)
 
     # Setting Modify for Authenticated Users
@@ -46,8 +45,7 @@ else {
     $Inheritance = "ContainerInherit, ObjectInherit"
     $Propagation = "None"
     $AccessControlType = "Allow"
-    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule
-	    ($Identity, $Permission, $Inheritance, $Propagation, $AccessControlType)
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($Identity, $Permission, $Inheritance, $Propagation, $AccessControlType)
     $acl.AddAccessRule($rule)
 
     Set-Acl $UNCPath $acl
