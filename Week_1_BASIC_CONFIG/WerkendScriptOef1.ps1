@@ -71,9 +71,17 @@ try {
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -ErrorAction Stop
     Start-Sleep -Seconds 1
 
+    # set default keyboard layout to NLD INTL
+    Write-Host "Setting default keyboard layout to NLD INTL ..."
+    Set-WinUserLanguageList -LanguageList nl-NL -ErrorAction Stop
+    Start-Sleep -Seconds 1
+
+
     # Restart computer
     Write-Host "Restarting computer ..."
     Restart-Computer -Force -ErrorAction Stop
+
+
 }
 catch {
     Write-Error "Error occurred during step: $($_.InvocationInfo.ScriptLineNumber). `nError message: $($_.Exception.Message)"
