@@ -2,8 +2,8 @@
 # Install DFS Namespaces on all participating servers
 #
 
-$secondDC = "win00-DC2"
-$MemberServer = "win00-ms"
+$secondDC = "win15-DC2"
+$MemberServer = "win15-ms"
 
 $Credential = "$env:USERNAME"
 $domainCredential = "$env:USERDOMAIN\$Credential"
