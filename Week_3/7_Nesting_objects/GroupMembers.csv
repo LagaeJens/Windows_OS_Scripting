@@ -1,0 +1,14 @@
+Member;Identity
+Rozemieke;Secretariaat
+ProfessorGobelijn;Directie
+ProfessorZonnebloem;Leerkrachten
+Suske;1ste leerjaar
+Asterix;2de leerjaar
+Directie;Personeel
+Directie;DL-Directie
+Secretariaat;Personeel
+Secretariaat;DL-Secretariaat
+Leerkrachten;Personeel
+Leerkrachten;DL-Leerkrachten
+1ste leerjaar;DL-Leerlingen
+2de leerjaar;DL-Leerlingen
