@@ -1,0 +1,11 @@
+Name;DisplayName;Description;GroupCategory;GroupScope;Path
+DL-Personeel;Personeel;Personeel;Security;DomainLocal;OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+DL-Directie;Directie;Directie;Security;DomainLocal;OU=Directie,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+DL-Secretariaat;Secretariaat;Secretariaat;Security;DomainLocal;OU=Secretariaat,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+DL-Leerkrachten;Leerkrachten;Leerkrachten;Security;DomainLocal;OU=Leerkrachten,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+DL-Leerlingen;Leerlingen;Leerlingen;Security;DomainLocal;OU=Leerlingen,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+Secretariaat;Secretariaat;Secretariaat;Security;Global;OU=Secretariaat,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+Directie;Directie;Directie;Security;Global;OU=Directie,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+Leerkrachten;Leerkrachten;Leerkrachten;Security;Global;OU=Leerkrachten,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+1ste leerjaar;1ste leerjaar;1ste leerjaar;Security;Global;OU=1ste leerjaar,OU=Leerlingen,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
+2de leerjaar;2de leerjaar;2de leerjaar;Security;Global;OU=2de leerjaar,OU=Leerlingen,OU=Mijn School,DC=intranet,DC=mijnschool,DC=be
