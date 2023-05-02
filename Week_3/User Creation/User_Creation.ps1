@@ -8,7 +8,7 @@ $userNames = Import-Csv ".\UserAccounts.csv" -Delimiter ";"
 
 $UPNSuffix = 'mijnschool.be'
 
-$homeServer = "win00-ms"
+$homeServer = "win15-ms"
 $homeShare = "Homedirs"
 
 Foreach ($User in $userNames) { 
