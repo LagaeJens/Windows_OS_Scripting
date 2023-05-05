@@ -1,6 +1,9 @@
 #
 # Promoting DC2 to become an additional DC in the existing Windows domain
 #
+#! select juiste SecondDC name!!!
+
+
 $ComputerName = $env:COMPUTERNAME
 $Credential = $env:USERNAME
 $domainCredential = "$env:USERDOMAIN\$Credential"

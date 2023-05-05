@@ -1,8 +1,9 @@
 #
 # Finding DFS Namespaces and Folders
 #
+#! select juiste domain name!!!
 
-$UserDNSDomain = ”intranet.mct.be”
+# $UserDNSDomain = ”intranet.mct.be”
 $DFSRoot = Get-DfsnRoot -Domain $UserDNSDomain | Where-object ( { $_.State -eq 'Online' } ) | Select-Object -ExpandProperty Path
 Write-Host “The DFSRoot is $DFSRoot”
 

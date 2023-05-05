@@ -1,5 +1,6 @@
 #
 # Making a share remotely
+#! - Select juiste driveletter
 #! - name: public
 # - share perms: everyone - full control
 # - NTFS perms: Administrators - full control and DL-Personeel - modify

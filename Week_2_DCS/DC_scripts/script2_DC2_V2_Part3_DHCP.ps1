@@ -1,6 +1,9 @@
 #
 # Install DHCP Server Role on DC2 
 #
+
+#! select juiste SecondDC name!!!
+
 $secondDC = "win00-DC2"
 $Credential = $env:USERNAME
 $domainCredential = "$env:USERDOMAIN\$Credential"

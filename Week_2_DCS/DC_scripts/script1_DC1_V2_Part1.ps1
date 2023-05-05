@@ -2,8 +2,9 @@
 # "Promote" a standalone server to a Domain Controller (=DC)
 #
 
-$UserDNSDomain = "intranet.mijnschool.be"
-$UserDomain = "mijnschool"
+#! dit het juiste invoeren !!!!!
+# $UserDNSDomain = "intranet.mijnschool.be"
+# $UserDomain = "mijnschool"
 
 #
 # Install Active Directory Domain Services - ADDS

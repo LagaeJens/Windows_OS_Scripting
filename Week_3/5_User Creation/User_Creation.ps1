@@ -4,9 +4,12 @@
 # *** Make sure the root folder for the user home folders already exists and is already shared
 #
 
+
+
 $userNames = Import-Csv ".\UserAccounts.csv" -Delimiter ";"
 
-$UPNSuffix = 'mijnschool.be'
+#! select juiste domain name!!!
+# $UPNSuffix = 'mijnschool.be'
 
 $homeServer = "win15-ms"
 $homeShare = "Homedirs"

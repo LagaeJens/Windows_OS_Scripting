@@ -1,8 +1,9 @@
 #
 # Creating a new DFS Namespaces
 #
+#! select juiste domain name!!!
 
-$UserDNSDomain = ”intranet.mct.be”
+# $UserDNSDomain = ”intranet.mct.be”
 $LocalPath = "C:\XYZ"
 $ShareName = "XYZ"
 
